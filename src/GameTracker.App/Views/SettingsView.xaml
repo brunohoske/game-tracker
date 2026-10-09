@@ -1,0 +1,182 @@
+<UserControl x:Class="GameTracker.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:GameTracker.App.ViewModels"
+             xmlns:reporting="clr-namespace:GameTracker.Core.Reporting;assembly=GameTracker.Core"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:SettingsViewModel}"
+             Width="640" MaxHeight="760">
+
+    <UserControl.Resources>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        </Style>
+        <Style x:Key="FieldHint" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{StaticResource TextDimBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,2,0,0" />
+        </Style>
+        <Style x:Key="SectionCard" TargetType="Border" BasedOn="{StaticResource Card}">
+            <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+            <Setter Property="Margin" Value="0,0,0,14" />
+            <Setter Property="Padding" Value="18,16" />
+        </Style>
+    </UserControl.Resources>
+
+    <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="16">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="50" ShadowDepth="12" Opacity="0.5" Color="Black" />
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid Margin="24,20,16,8">
+                <TextBlock Text="Configurações" FontFamily="{StaticResource DisplayFont}" FontSize="22" Foreground="{StaticResource TextBrush}" />
+                <Button Style="{StaticResource IconButton}" Content="&#xE8BB;" FontSize="11" HorizontalAlignment="Right" Command="{Binding CancelCommand}" ToolTip="Fechar (Esc)" AutomationProperties.Name="Fechar configurações" />
+            </Grid>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,8,16,8">
+                <StackPanel Margin="0,0,8,0">
+
+                    <!-- General -->
+                    <TextBlock Text="GERAL" Style="{StaticResource SectionTitleText}" Margin="0,4,0,10" />
+                    <Border Style="{StaticResource SectionCard}">
+                        <StackPanel>
+                            <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding StartWithWindows}">
+                                <StackPanel>
+                                    <TextBlock Text="Iniciar com o Windows" Style="{StaticResource FieldLabel}" />
+                                    <TextBlock Text="Abre minimizado na bandeja e começa a rastrear imediatamente." Style="{StaticResource FieldHint}" />
+                                </StackPanel>
+                            </CheckBox>
+                            <Border Height="1" Background="{StaticResource BorderBrush}" Margin="0,14" />
+                            <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding SuggestGames}">
+                                <StackPanel>
+                                    <TextBlock Text="Sugerir jogos desconhecidos" Style="{StaticResource FieldLabel}" />
+                                    <TextBlock Text="Programas em tela cheia que usam gráficos 3D e bibliotecas de jogo (controle, engine), em qualquer pasta, viram sugestões para você confirmar." Style="{StaticResource FieldHint}" />
+                                </StackPanel>
+                            </CheckBox>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Tracking -->
+                    <TextBlock Text="RASTREAMENTO" Style="{StaticResource SectionTitleText}" Margin="0,10,0,10" />
+                    <Border Style="{StaticResource SectionCard}">
+                        <StackPanel>
+                            <Grid>
+                                <TextBlock Text="Intervalo de verificação" Style="{StaticResource FieldLabel}" />
+                                <TextBlock HorizontalAlignment="Right" Foreground="{StaticResource AccentBrush}" FontFamily="{StaticResource DisplayFont}"
+                                           Text="{Binding PollIntervalSeconds, StringFormat={}{0:0} s}" />
+                            </Grid>
+                            <Slider Minimum="2" Maximum="30" TickFrequency="1" Value="{Binding PollIntervalSeconds}" Margin="0,8,0,0" />
+                            <TextBlock Text="Menor = mais preciso. O custo é mínimo em qualquer valor." Style="{StaticResource FieldHint}" />
+
+                            <Grid Margin="0,18,0,0">
+                                <TextBlock Text="Duração mínima de uma sessão" Style="{StaticResource FieldLabel}" />
+                                <TextBlock HorizontalAlignment="Right" Foreground="{StaticResource AccentBrush}" FontFamily="{StaticResource DisplayFont}"
+                                           Text="{Binding MinimumSessionMinutes, StringFormat={}{0:0.#} min}" />
+                            </Grid>
+                            <Slider Minimum="0" Maximum="10" TickFrequency="0.5" Value="{Binding MinimumSessionMinutes}" Margin="0,8,0,0" />
+                            <TextBlock Text="Sessões mais curtas são descartadas (aberturas acidentais, crashes ao iniciar)." Style="{StaticResource FieldHint}" />
+
+                            <Grid Margin="0,18,0,0">
+                                <TextBlock Text="Unir sessões separadas por até" Style="{StaticResource FieldLabel}" />
+                                <TextBlock HorizontalAlignment="Right" Foreground="{StaticResource AccentBrush}" FontFamily="{StaticResource DisplayFont}"
+                                           Text="{Binding MergeGapMinutes, StringFormat={}{0:0.#} min}" />
+                            </Grid>
+                            <Slider Minimum="0" Maximum="15" TickFrequency="0.5" Value="{Binding MergeGapMinutes}" Margin="0,8,0,0" />
+                            <TextBlock Text="Reabrir o jogo logo após fechar (ou um launcher que reinicia) continua a mesma sessão." Style="{StaticResource FieldHint}" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Folders -->
+                    <TextBlock Text="PASTAS DE JOGOS" Style="{StaticResource SectionTitleText}" Margin="0,10,0,10" />
+                    <Border Style="{StaticResource SectionCard}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource FieldHint}" Margin="0,0,0,10"
+                                       Text="Steam, Epic, GOG, Ubisoft, Xbox, Riot, EA e Rockstar já são detectados automaticamente. Adicione aqui pastas próprias onde cada subpasta é um jogo (ex.: D:\Jogos)." />
+                            <ItemsControl ItemsSource="{Binding GameFolders}" Focusable="False">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{StaticResource SurfaceBrush}" CornerRadius="8" Padding="12,6,6,6" Margin="0,0,0,6">
+                                            <Grid>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="&#xE8B7;" Style="{StaticResource IconText}" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,10,0" />
+                                                    <TextBlock Text="{Binding}" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}" FontSize="13" />
+                                                </StackPanel>
+                                                <Button Style="{StaticResource IconButton}" Content="&#xE74D;" FontSize="12" Width="30" Height="30" HorizontalAlignment="Right"
+                                                        ToolTip="Remover pasta" AutomationProperties.Name="Remover pasta" CommandParameter="{Binding}"
+                                                        Command="{Binding DataContext.RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Button Style="{StaticResource SecondaryButton}" HorizontalAlignment="Left" Command="{Binding AddFolderCommand}" Margin="0,4,0,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE710;" Style="{StaticResource IconText}" FontSize="12" Margin="0,0,8,0" />
+                                    <TextBlock Text="Adicionar pasta" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- IGDB -->
+                    <TextBlock Text="METADADOS · IGDB" Style="{StaticResource SectionTitleText}" Margin="0,10,0,10" />
+                    <Border Style="{StaticResource SectionCard}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource FieldHint}" Margin="0,0,0,12">
+                                Capas e detalhes vêm da Steam Store (sem chave). Com credenciais do IGDB (Twitch) a cobertura fica completa para jogos de qualquer loja.
+                                <Hyperlink Command="{Binding OpenIgdbDocsCommand}" Foreground="{StaticResource AccentBrush}">Como obter</Hyperlink>
+                            </TextBlock>
+                            <TextBlock Text="Client ID" Style="{StaticResource FieldLabel}" Margin="0,0,0,6" />
+                            <TextBox Text="{Binding IgdbClientId, UpdateSourceTrigger=PropertyChanged}" Tag="Twitch Client ID" />
+                            <TextBlock Text="Client Secret" Style="{StaticResource FieldLabel}" Margin="0,12,0,6" />
+                            <PasswordBox x:Name="SecretBox" PasswordChanged="OnSecretChanged" />
+                            <TextBlock Text="Armazenado criptografado (DPAPI) para o seu usuário do Windows." Style="{StaticResource FieldHint}" Margin="0,6,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Ignored -->
+                    <TextBlock Text="IGNORADOS (NÃO SÃO JOGOS)" Style="{StaticResource SectionTitleText}" Margin="0,10,0,10" />
+                    <Border Style="{StaticResource SectionCard}">
+                        <StackPanel>
+                            <TextBlock Text="Nenhum item ignorado." Style="{StaticResource FieldHint}" Margin="0"
+                                       Visibility="{Binding IgnoredGames.Count, Converter={StaticResource VisibleWhen}, ConverterParameter=invert}" />
+                            <ItemsControl ItemsSource="{Binding IgnoredGames}" Focusable="False">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type reporting:GameInfo}">
+                                        <Border Background="{StaticResource SurfaceBrush}" CornerRadius="8" Padding="12,6,6,6" Margin="0,0,0,6">
+                                            <Grid>
+                                                <StackPanel VerticalAlignment="Center" Margin="0,0,110,0">
+                                                    <TextBlock Text="{Binding Name}" Foreground="{StaticResource TextBrush}" FontSize="13" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding ExecutablePath}" Foreground="{StaticResource TextDimBrush}" FontSize="11" TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
+                                                <Button Style="{StaticResource GhostButton}" Content="Restaurar" HorizontalAlignment="Right" CommandParameter="{Binding}"
+                                                        Command="{Binding DataContext.RestoreGameCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Border Grid.Row="2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="24,14">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource GhostButton}" Content="Cancelar" Command="{Binding CancelCommand}" Margin="0,0,8,0" />
+                    <Button Style="{StaticResource PrimaryButton}" Content="Salvar" Command="{Binding SaveCommand}" IsDefault="True" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

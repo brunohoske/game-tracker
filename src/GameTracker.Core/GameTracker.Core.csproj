@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Domain and application logic. Platform-agnostic on purpose: it can be reused by a future server. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="GameTracker.Core.Tests" />
+  </ItemGroup>
+
+</Project>

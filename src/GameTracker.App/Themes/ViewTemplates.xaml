@@ -1,0 +1,26 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:GameTracker.App.ViewModels"
+                    xmlns:views="clr-namespace:GameTracker.App.Views">
+
+    <!-- View model → view mapping (implicit templates). -->
+    <DataTemplate DataType="{x:Type vm:GamesViewModel}">
+        <views:GamesView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:GameDetailViewModel}">
+        <views:GameDetailView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:TimeCapsuleViewModel}">
+        <views:TimeCapsuleView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:MonthDetailViewModel}">
+        <views:MonthDetailView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+        <views:SettingsView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:ConfirmDialogViewModel}">
+        <views:ConfirmDialogView />
+    </DataTemplate>
+
+</ResourceDictionary>

@@ -1,0 +1,33 @@
+<UserControl x:Class="GameTracker.App.Views.ConfirmDialogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:GameTracker.App.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:ConfirmDialogViewModel}"
+             Width="440">
+    <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="16" Padding="24,22">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="50" ShadowDepth="12" Opacity="0.5" Color="Black" />
+        </Border.Effect>
+        <StackPanel>
+            <TextBlock Text="{Binding Title}" FontFamily="{StaticResource DisplayFont}" FontSize="20" Foreground="{StaticResource TextBrush}" />
+            <TextBlock Text="{Binding Message}" Margin="0,10,0,0" TextWrapping="Wrap" FontSize="13" LineHeight="20" Foreground="{StaticResource TextMutedBrush}" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,22,0,0">
+                <Button Style="{StaticResource GhostButton}" Content="Cancelar" Command="{Binding CancelCommand}" Margin="0,0,8,0" IsCancel="True" />
+                <Button x:Name="ConfirmButton" Content="{Binding ConfirmText}" Command="{Binding ConfirmCommand}" IsDefault="True">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDestructive}" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource DangerBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>
